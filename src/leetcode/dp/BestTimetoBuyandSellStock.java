@@ -3,7 +3,7 @@ package leetcode.dp;
 public class BestTimetoBuyandSellStock {
 
     public static void main(String[] args) {
-        int[] arr = new int[]{3,3,5,0,0,3,1,4};
+        int[] arr = new int[]{8,3,6,2,8,8,8,4,2,0,7,2,9,4,9};
         System.out.println(maxProfit3(arr));
     }
 
@@ -58,44 +58,38 @@ public class BestTimetoBuyandSellStock {
         //convert this problem to find the top two maximum subarray sum
         //twoProfit is the new array mentioned above
         int length = prices.length;
-        if(length == 0){
+        if(length <= 1){
             return 0;
         }
-        int[] twoProfit = new int[length];
-        int[][] dp = new int[2][length];
-        int currentProfit = 0;
-        int maxProfit = 0;
+        int[] interpolation = new int[length];
+        int[][] sum = new int[3][length];
+        int[][] maxSum = new int[3][length];
 
 
         for (int i = 1; i < length; i++) {
-            twoProfit[i] = prices[i] - prices[i-1];
+            interpolation[i] = prices[i] - prices[i-1];
         }
         //twoProfit is the new array mentioned above
 
-        for (int j = 0; j < length; j++) {
-            if(currentProfit + twoProfit[j] >= 0){
-                currentProfit = currentProfit + twoProfit[j];
-                maxProfit = Math.max(currentProfit, maxProfit);
-                dp[0][j] = maxProfit;
-            }else{
-                dp[0][j] = dp[0][j-1];
-                currentProfit = 0;
-            }
+        for (int i = 1; i < length; i++) {
+            maxSum[0][i] = (maxSum[0][i-1] + interpolation[i]) > 0 ? maxSum[0][i-1] + interpolation[i] : 0;
         }
-
-        for (int i = 0; i < length; i++) {
-            System.out.print(dp[0][i] + "\t");
-        }
-        System.out.println("\n");
 
         for (int j = 1; j < length; j++) {
-            if(twoProfit[j] >= 0){
-                dp[1][j] = Math.max(dp[1][j-1] + twoProfit[j], dp[1][j-1]);
+            sum[1][j] = (maxSum[1][j-1] + interpolation[j]) > 0 ? maxSum[0][j-1] + interpolation[j] : 0;
+            maxSum[1][j] = Math.max(maxSum[0][j-1] + interpolation[j], maxSum[1][j-1]);
+        }
+
+        for (int k = 1; k < length; k++) {
+            if(sum[2][k - 1] == maxSum[2][k - 1]) {
+                sum[2][k] = maxSum[2][k - 1] + interpolation[k];
+                maxSum[2][k] = Math.max(maxSum[2][k - 1] + interpolation[k], maxSum[2][k - 1]);
             }else{
-                dp[1][j] = Math.max(dp[0][j-1] + twoProfit[j], dp[1][j-1]);
+                sum[2][k] = maxSum[1][k - 1] + interpolation[k];
+                maxSum[2][k] = Math.max(maxSum[1][k - 1] + interpolation[k], maxSum[2][k - 1]);
             }
         }
 
-        return dp[1][length-1];
+        return maxSum[2][length-1];
     }
 }
