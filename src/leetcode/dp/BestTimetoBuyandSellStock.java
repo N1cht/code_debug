@@ -3,7 +3,7 @@ package leetcode.dp;
 public class BestTimetoBuyandSellStock {
 
     public static void main(String[] args) {
-        int[] arr = new int[]{8,3,6,2,8,8,8,4,2,0,7,2,9,4,9};
+        int[] arr = new int[]{1,2};
         System.out.println(maxProfit3(arr));
     }
 
@@ -55,6 +55,7 @@ public class BestTimetoBuyandSellStock {
     }
 
     public static int maxProfit3(int[] prices) {
+        /* this way fails
         //convert this problem to find the top two maximum subarray sum
         //twoProfit is the new array mentioned above
         int length = prices.length;
@@ -62,9 +63,7 @@ public class BestTimetoBuyandSellStock {
             return 0;
         }
         int[] interpolation = new int[length];
-        int[][] sum = new int[3][length];
         int[][] maxSum = new int[3][length];
-
 
         for (int i = 1; i < length; i++) {
             interpolation[i] = prices[i] - prices[i-1];
@@ -76,20 +75,38 @@ public class BestTimetoBuyandSellStock {
         }
 
         for (int j = 1; j < length; j++) {
-            sum[1][j] = (maxSum[1][j-1] + interpolation[j]) > 0 ? maxSum[0][j-1] + interpolation[j] : 0;
             maxSum[1][j] = Math.max(maxSum[0][j-1] + interpolation[j], maxSum[1][j-1]);
         }
 
         for (int k = 1; k < length; k++) {
-            if(sum[2][k - 1] == maxSum[2][k - 1]) {
-                sum[2][k] = maxSum[2][k - 1] + interpolation[k];
-                maxSum[2][k] = Math.max(maxSum[2][k - 1] + interpolation[k], maxSum[2][k - 1]);
-            }else{
-                sum[2][k] = maxSum[1][k - 1] + interpolation[k];
-                maxSum[2][k] = Math.max(maxSum[1][k - 1] + interpolation[k], maxSum[2][k - 1]);
-            }
+            maxSum[2][k] = Math.max(maxSum[2][k - 1] + interpolation[k], maxSum[2][k - 1]);
         }
 
-        return maxSum[2][length-1];
+        return maxSum[2][length-1];*/
+        int length = prices.length;
+        if(length <= 1){
+            return 0;
+        }
+        int ret = 0;
+        int minPrice = prices[0];
+        int maxPrice = prices[length - 1];
+        int[] forward = new int[length];
+        int[] backward = new int[length];
+
+        for(int i = 1; i < length; i++){
+            minPrice = Math.min(minPrice, prices[i]);
+            forward[i] = Math.max(forward[i - 1], prices[i] - minPrice);
+        }
+
+        for(int j = length - 2; j >= 0; j--){
+            maxPrice = Math.max(maxPrice, prices[j]);
+            backward[j] = Math.max(backward[j + 1], maxPrice - prices[j]);
+        }
+
+        for (int k = 0; k < length; k++) {
+            ret = Math.max(forward[k] + backward[k], ret);
+        }
+
+        return ret;
     }
 }
