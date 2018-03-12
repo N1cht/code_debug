@@ -109,4 +109,22 @@ public class BestTimetoBuyandSellStock {
 
         return ret;
     }
+
+    public static int maxProfit4(int k, int[] prices){
+
+        int length = prices.length;
+        int profit = 0;
+        if (length == 0) return 0;
+        int[][] local = new int[k + 1][length];
+        int[][] global = new int[k + 1][length];
+        if(k >= length/2) {
+            for (int i = 1; i < length; i++)
+                // as long as there is a price gap, we gain a profit.
+                if (prices[i] > prices[i - 1]) profit += prices[i] - prices[i - 1];
+        }else{
+
+        }
+
+        return profit;
+    }
 }
