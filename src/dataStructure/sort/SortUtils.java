@@ -91,6 +91,7 @@ public class SortUtils {
     }
 
     //optimization: in each iteration chose three elements and sort them, use the median element as the guard.
+    //              to avoid the case that the guard is the largest or the smallest one.
     public static int[] quickSort(int[] array){
 
         partitionSort(array, 0, array.length - 1);
