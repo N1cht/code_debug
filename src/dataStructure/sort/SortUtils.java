@@ -6,8 +6,8 @@ package dataStructure.sort;
 public class SortUtils {
 
     public static void main(String[] args) {
-        int[] arr = new int[]{16,7,3,20,17,8};
-        heapSort(arr);
+        int[] arr = new int[]{49,38,65,97,76,13,27,49};
+        quickSort(arr);
         for (int i = 0; i < arr.length; i++) {
             System.out.println(arr[i]);
         }
@@ -88,6 +88,44 @@ public class SortUtils {
         }
 
         return array;
+    }
+
+    //optimization: in each iteration chose three elements and sort them, use the median element as the guard.
+    public static int[] quickSort(int[] array){
+
+        partitionSort(array, 0, array.length - 1);
+        return array;
+    }
+
+
+    private static void partitionSort(int[] array, int startIndex, int endIndex){
+
+        if (startIndex >= endIndex) return;
+        int guard = array[startIndex];
+
+        int left = startIndex;
+        int right = endIndex;
+        while (left != right){
+
+            while (left < right && array[right] >= guard){
+                right--;
+            }
+            while (left < right && array[left] <= guard){
+                left++;
+            }
+
+            if(left < right) {
+                int temp = array[left];
+                array[left] = array[right];
+                array[right] = temp;
+            }
+        }
+
+        array[startIndex] = array[left];
+        array[left] = guard;
+
+        partitionSort(array, startIndex, left - 1);
+        partitionSort(array, left + 1, endIndex);
     }
 
     private static void maxHeapSort(int[] array, int endIndex){
